@@ -10,15 +10,19 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import static com.test.estimator.domain.DeveloperType.BACKEND;
 import static com.test.estimator.domain.DeveloperType.FRONTEND;
 import static java.time.DayOfWeek.SATURDAY;
 import static java.time.DayOfWeek.SUNDAY;
+
 
 @Service
 @Transactional
@@ -53,7 +57,7 @@ public class EstimationService {
         Calendar theEndDateOfTheProject = createCalendarFromDate(currentDate);
 
         while (days > 0) {
-            if (!isDayWeekend(theEndDateOfTheProject) || !isHoliday(theEndDateOfTheProject)) {
+            if (!isDayWeekend(theEndDateOfTheProject) && !isHoliday(theEndDateOfTheProject)) {
                 days--;
             }
             theEndDateOfTheProject.add(Calendar.DATE, 1);
@@ -147,15 +151,31 @@ public class EstimationService {
         Calendar theEndDateOfTheProject = createCalendarFromDate(company.getBookedTillDate());
         DateTime startTime = DateTime.now();
         DateTime endTime = new DateTime(company.getBookedTillDate());
-        Period p = new Period(startTime, endTime);
-        int numOfDaysInCurrentYear = theEndDateOfTheProject.getActualMaximum(Calendar.DAY_OF_YEAR);
-        int numOfDaysInCurrentMonth = theEndDateOfTheProject.getActualMaximum(Calendar.DAY_OF_MONTH);
-        int hoursToFinishPreviousProject = (p.getYears() * numOfDaysInCurrentYear) + (p.getMonths() * numOfDaysInCurrentMonth) +
-                (p.getWeeks() * WORKING_HOURS_PER_WEEK) + (p.getDays() * WORKING_HOURS_PER_DAY) + p.getHours();
+        LocalDate startDate = LocalDate.now();
+        LocalDate beginningOfMonth = startDate.withDayOfMonth(1);
+        LocalDate endOfMonth = startDate.plusMonths(1).withDayOfMonth(1).minusDays(1);
 
+        Period periodBetweenTodayAndTheEndOfTheProjectDay = new Period(startTime, endTime);
+        int numOfDaysInCurrentYear = theEndDateOfTheProject.getActualMaximum(Calendar.DAY_OF_YEAR);
+
+        long numOfDaysInCurrentMonthWithoutWeekends = countDaysInCurrentMonthWithoutWeekends(beginningOfMonth, endOfMonth);
+        int hoursInCurrentYear = periodBetweenTodayAndTheEndOfTheProjectDay.getYears() * numOfDaysInCurrentYear;
+        int hoursInCurrentMonth = Math.toIntExact(periodBetweenTodayAndTheEndOfTheProjectDay.getMonths() *
+                numOfDaysInCurrentMonthWithoutWeekends * WORKING_HOURS_PER_DAY);
+        int hoursInWeek = periodBetweenTodayAndTheEndOfTheProjectDay.getWeeks() * WORKING_HOURS_PER_WEEK;
+        int hoursInDay = periodBetweenTodayAndTheEndOfTheProjectDay.getDays() * WORKING_HOURS_PER_DAY;
+        int hoursToFinishPreviousProject = Math.toIntExact(hoursInCurrentYear + hoursInCurrentMonth + hoursInWeek +
+                 + hoursInDay + periodBetweenTodayAndTheEndOfTheProjectDay.getHours());
         resultForCompanyInHours += hoursToFinishPreviousProject;
 
         return resultForCompanyInHours;
+    }
+
+    private long countDaysInCurrentMonthWithoutWeekends(LocalDate beginningOfMonth, LocalDate endOfMonth) {
+        return Stream.iterate(beginningOfMonth, date -> date.plusDays(1))
+                .limit(ChronoUnit.DAYS.between(beginningOfMonth, endOfMonth))
+                .filter(date -> date.getDayOfWeek() != SATURDAY && date.getDayOfWeek() != SUNDAY)
+                .count();
     }
 
     private Calendar createCalendarFromDate(Date bookedTillDate) {

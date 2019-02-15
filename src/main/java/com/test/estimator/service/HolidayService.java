@@ -53,7 +53,7 @@ public class HolidayService {
             JSONObject holidayJson = (JSONObject) holidayObj;
             JSONObject holidayDateJson = holidayJson.getJSONObject("date").getJSONObject("datetime");
             Calendar holidayDate = new GregorianCalendar(holidayDateJson.optInt("year"),
-                    holidayDateJson.optInt("month"), holidayDateJson.optInt("day"));
+                    holidayDateJson.optInt("month") - 1, holidayDateJson.optInt("day"));
             holidays.add(holidayDate);
         }
 

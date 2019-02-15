@@ -69,7 +69,7 @@ public class EstimationServiceTest {
         Date currentDate = DATE_FORMAT.parse(date);
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(currentDate);
-        calendar.add(Calendar.DATE, 6); //50 hours for 1 developer = 50/8=6 days
+        calendar.add(Calendar.DATE, 10); //50 hours for 1 developer = 50/8=6 days (+weekends 2x2)
         currentDate = calendar.getTime();
         assertEquals(result, DATE_FORMAT.format(currentDate));
     }
@@ -99,7 +99,7 @@ public class EstimationServiceTest {
         Date currentDate = DATE_FORMAT.parse(date);
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(currentDate);
-        calendar.add(Calendar.DATE, 12); //12 days with holidays and weekends
+        calendar.add(Calendar.DATE, 18); //12 working days + holidays and weekends
         currentDate = calendar.getTime();
         assertEquals(result, DATE_FORMAT.format(currentDate));
     }
@@ -108,7 +108,7 @@ public class EstimationServiceTest {
     public void shouldPredictDateForBothFrontendAndBackendTasks() throws ParseException {
         //given
         Integer backendEstimationHours = 50;
-        Integer frontendEstimationHours = 100;
+        Integer frontendEstimationHours = 50;
         Developer developerOne = new Developer();
         developerOne.setDeveloperName("Rost");
         developerOne.setDeveloperType(DeveloperType.FRONTEND);
@@ -132,7 +132,7 @@ public class EstimationServiceTest {
         Date currentDate = DATE_FORMAT.parse(date);
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(currentDate);
-        calendar.add(Calendar.DATE, 18); //18 days
+        calendar.add(Calendar.DATE, 18); //18 days = 12 working days + weekends and holidays
         currentDate = calendar.getTime();
         assertEquals(result, DATE_FORMAT.format(currentDate));
     }
@@ -171,7 +171,7 @@ public class EstimationServiceTest {
         //then
         Date currentDate = DATE_FORMAT.parse(date);
         calendar.setTime(currentDate);
-        calendar.add(Calendar.DATE, 44); // 44 days with holidays and weekends
+        calendar.add(Calendar.DATE, 70); // 70 days with holidays and weekends
         currentDate = calendar.getTime();
         assertEquals(result, DATE_FORMAT.format(currentDate));
     }

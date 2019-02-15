@@ -1,5 +1,6 @@
 package com.test.estimator.service;
 
+import com.test.estimator.domain.Developer;
 import com.test.estimator.repository.DeveloperRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,5 +20,9 @@ public class DeveloperService {
 
     public void deleteAllDevelopers() {
         developerRepository.deleteAll();
+    }
+
+    public Developer save(Developer developer) {
+        return developerRepository.save(developer);
     }
 }
