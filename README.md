@@ -24,6 +24,6 @@ Instruction how to use endpoints:
 - Put the following requests inside and run it (result will be delivered in the console as well)
   * curl -X POST https://calm-spire-41022.herokuapp.com/api/companies (for creating a new entry)
   * curl -X DELETE https://calm-spire-41022.herokuapp.com/api/companies (for deleting all entries)
-  * curl -H "Accept: application/json" -H "Content-type: application/json" -X POST -d '{"backendTasksEstimation": 50,"frontendTasksEstimation":100}' https://calm-spire-41022.herokuapp.com/api/companies/prediction
+  * curl -H "Accept: application/json" -H "Content-type: application/json" -X POST -d '{"backendTasksEstimation": 50,"frontendTasksEstimation":100}' https://calm-spire-41022.herokuapp.com/api/companies/prediction (for prediction)
   
 
