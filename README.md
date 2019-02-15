@@ -12,3 +12,5 @@ API Description:
 	"backendTasksEstimation": 50,
 	"frontendTasksEstimation": 100
 }
+
+Note: some entries are already created and you don't need to create them at the beginning
