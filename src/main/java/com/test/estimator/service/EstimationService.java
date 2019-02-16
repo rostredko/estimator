@@ -189,9 +189,9 @@ public class EstimationService {
         return theEndDateOfTheProject;
     }
 
-    private int getNumberOfDevelopersByType(Company company, DeveloperType frontend) {
+    private int getNumberOfDevelopersByType(Company company, DeveloperType developerType) {
         return Math.toIntExact(company.getDevelopers().stream()
-                .filter(developer -> frontend.equals(developer.getDeveloperType()))
+                .filter(developer -> developerType.equals(developer.getDeveloperType()))
                 .count());
     }
 }
